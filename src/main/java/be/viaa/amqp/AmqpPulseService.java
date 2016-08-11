@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 /**
  * Periodically checks to see if there are new messages available on the queue
  * 
@@ -15,34 +18,20 @@ import java.util.Map.Entry;
  */
 public class AmqpPulseService {
 
-	private static final long DEFAULT_INTERVAL = 5000;
+	/**
+	 * The logger for this class
+	 */
+	private static final Logger logger = LogManager.getLogger(AmqpPulseService.class);
 
 	/**
 	 * The AMQP service
 	 */
 	private final AmqpService service;
-	
+
 	/**
 	 * The collection of consumers
 	 */
 	private final Map<String, List<AmqpConsumer>> consumers = new HashMap<>();
-	
-	/**
-	 * Indicates the service has been canceled
-	 */
-	private boolean canceled;
-	
-	/**
-	 * 
-	 */
-	private long interval;
-
-	/**
-	 * @param service
-	 */
-	public AmqpPulseService(AmqpService service) {
-		this (service, DEFAULT_INTERVAL);
-	}
 
 	/**
 	 * @param service
@@ -50,52 +39,28 @@ public class AmqpPulseService {
 	 * @param canceled
 	 * @param interval
 	 */
-	public AmqpPulseService(AmqpService service, long interval) {
+	public AmqpPulseService(AmqpService service) {
 		this.service = service;
-		this.interval = interval;
 	}
 
 	/**
 	 * Starts the periodic polling service
 	 */
 	public void start() {
-		if (canceled)
-			throw new IllegalStateException("attempting to start canceled service");
-		
-		while (!canceled) {
-			try {
-				for (Iterator<Entry<String, List<AmqpConsumer>>> iterator = consumers.entrySet().iterator(); iterator.hasNext(); ) {
-					Entry<String, List<AmqpConsumer>> entry = iterator.next();
-					
-					for (AmqpConsumer consumer : entry.getValue()) {
-						service.read(entry.getKey(), consumer);
-					}
+		logger.info("Listening to message from service: " + service.toString());
+		try {
+			for (Iterator<Entry<String, List<AmqpConsumer>>> iterator = consumers.entrySet().iterator(); iterator.hasNext();) {
+				Entry<String, List<AmqpConsumer>> entry = iterator.next();
+
+				for (AmqpConsumer consumer : entry.getValue()) {
+					service.read(entry.getKey(), consumer);
 				}
-				
-				Thread.sleep(interval);
-			} catch (InterruptedException exception) {
-				shutdown();
-			} catch (Exception ex) {
-				ex.printStackTrace();
-				shutdown();
 			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
 	}
 
-	/**
-	 * Cancels this service
-	 */
-	public void shutdown() {
-		this.canceled = true;
-	}
-	
-	/**
-	 * Sets the interval between 2 AMQP get requests
-	 */
-	public void setInterval(long interval) {
-		this.interval = interval;
-	}
-	
 	/**
 	 * Adds a listener to the collection
 	 * 
@@ -107,6 +72,7 @@ public class AmqpPulseService {
 			consumers.put(queue, new LinkedList<AmqpConsumer>());
 		}
 		consumers.get(queue).add(consumer);
+		logger.info("Added listener to queue '" + queue + "'");
 	}
 
 }

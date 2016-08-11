@@ -1,9 +1,9 @@
 package be.viaa.fxp.amqp;
 
-import be.viaa.FileTransporter;
 import be.viaa.amqp.AmqpJsonConsumer;
 import be.viaa.amqp.AmqpService;
 import be.viaa.amqp.util.JsonConverter;
+import be.viaa.fxp.FileTransporter;
 import be.viaa.fxp.FxpFileTransporter;
 import be.viaa.fxp.model.File;
 import be.viaa.fxp.model.Host;
@@ -14,7 +14,7 @@ import be.viaa.fxp.model.Host;
  * @author Hannes Lowette
  *
  */
-public class FxpConsumer extends AmqpJsonConsumer<FxpMessage> {
+public class FxpConsumer extends AmqpJsonConsumer<FxpRequest> {
 
 	/**
 	 * The file transporter
@@ -25,11 +25,11 @@ public class FxpConsumer extends AmqpJsonConsumer<FxpMessage> {
 	 * Constructor to identify the class used in the JSON parser
 	 */
 	public FxpConsumer() {
-		super(FxpMessage.class);
+		super(FxpRequest.class);
 	}
 
 	@Override
-	public void accept(AmqpService service, FxpMessage message) throws Exception {
+	public void accept(AmqpService service, FxpRequest message) throws Exception {
 		File sourceFile = new File(message.getSourcePath(), message.getSourceFile());
 		File targetFile = new File(message.getDestinationPath(), message.getDestinationFile());
 		
@@ -40,7 +40,7 @@ public class FxpConsumer extends AmqpJsonConsumer<FxpMessage> {
 	}
 
 	@Override
-	public void success(AmqpService service, FxpMessage message) throws Exception {
+	public void success(AmqpService service, FxpRequest message) throws Exception {
 		FxpResponse response = new FxpResponse();
 		
 		response.setCorrelationId(message.getPid());
@@ -52,7 +52,7 @@ public class FxpConsumer extends AmqpJsonConsumer<FxpMessage> {
 	}
 
 	@Override
-	public void exception(AmqpService service, Exception exception, FxpMessage message) {
+	public void exception(AmqpService service, Exception exception, FxpRequest message) {
 		FxpResponse response = new FxpResponse();
 		
 		response.setCorrelationId(message.getPid());
@@ -60,6 +60,8 @@ public class FxpConsumer extends AmqpJsonConsumer<FxpMessage> {
 		response.setSourceFileRemoved(false);
 		response.setOutcome("NOK");
 		response.setComment(exception.getMessage());
+		
+		exception.printStackTrace();
 		
 		try {
 			service.write("queue_name", JsonConverter.convert(response));

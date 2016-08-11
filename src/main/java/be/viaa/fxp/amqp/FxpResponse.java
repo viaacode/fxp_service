@@ -1,5 +1,7 @@
 package be.viaa.fxp.amqp;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Response when the FXP transfer has been carried out
  * 
@@ -11,6 +13,7 @@ public class FxpResponse {
 	/**
 	 * The correlation Id of the processed file
 	 */
+	@SerializedName("correlation_id")
 	private String correlationId;
 	
 	/**

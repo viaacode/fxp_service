@@ -45,8 +45,12 @@ public class RabbitMQService implements AmqpService {
 	public RabbitMQService(String host, String username, String password) throws TimeoutException, IOException {
 		this.factory = new ConnectionFactory();
 		this.factory.setHost(host);
-		this.factory.setUsername(username);
-		this.factory.setPassword(password);
+		
+		if (username != null && !username.equals("")) {
+			this.factory.setUsername(username);
+			this.factory.setPassword(password);
+		}
+		
 		this.connection = factory.newConnection();
 	}
 
@@ -59,6 +63,23 @@ public class RabbitMQService implements AmqpService {
 		this.factory.setHost(host);
 		this.connection = factory.newConnection();
 	}
+
+	@Override
+	public void read(String queue, AmqpConsumer consumer) throws IOException {
+		Channel channel = this.channel();
+		
+		channel.basicConsume(queue, true, new RabbitMQConsumer(channel, this, consumer));
+	}
+
+	@Override
+	public void write(String queue, byte[] data) throws IOException {
+		this.channel().basicPublish("", queue, null, data);
+	}
+
+	@Override
+	public String toString() {
+		return "Rabbit MQ (host: " + this.factory.getHost() + ":" + this.factory.getPort() + ")";
+	}
 	
 	/**
 	 * Gets a new channel from 
@@ -69,16 +90,5 @@ public class RabbitMQService implements AmqpService {
 	private final Channel channel() throws IOException {
 		return connection.createChannel();
 	}
-
-	@Override
-	public void read(String queue, AmqpConsumer consumer) throws IOException {
-		Channel channel = this.channel();
-		channel.basicConsume(queue, new RabbitMQConsumer(channel, this, consumer));
-	}
-
-	@Override
-	public void write(String queue, byte[] data) throws IOException {
-		this.channel().basicPublish(null, queue, null, data);
-	}
-
+	
 }

@@ -26,6 +26,14 @@ public class File {
 		this.name = name;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "File [directory=" + directory + ", name=" + name + "]";
+	}
+
 	/**
 	 * Gets a new file in the same directory
 	 * 

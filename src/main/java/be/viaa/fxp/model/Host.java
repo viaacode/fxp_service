@@ -55,6 +55,14 @@ public class Host {
 		this.password = password;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Host [host=" + host + ", port=" + port + ", username=" + username + ", password=" + password + "]";
+	}
+
 	/**
 	 * @return the host
 	 */
