@@ -11,6 +11,11 @@ import com.google.gson.annotations.SerializedName;
 public class FxpResponse {
 
 	/**
+	 * The format in which the timestamp is shown
+	 */
+	public static final String TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss,SSS";
+
+	/**
 	 * The correlation Id of the processed file
 	 */
 	@SerializedName("correlation_id")
@@ -36,6 +41,35 @@ public class FxpResponse {
 	 * OK, this should be null.
 	 */
 	private String comment;
+	
+	/**
+	 * The filename of the source file
+	 */
+	@SerializedName("source_name")
+	private String filename;
+	
+	/**
+	 * The directory of the source file
+	 */
+	@SerializedName("source_path")
+	private String directory;
+	
+	/**
+	 * The source FTP host
+	 */
+	@SerializedName("source_host")
+	private String sourceHost;
+	
+	/**
+	 * The destination FTP host
+	 */
+	@SerializedName("destination_host")
+	private String destinationHost;
+	
+	/**
+	 * The timestamp at which the response is created
+	 */
+	private String timestamp;
 
 	/**
 	 * @return the correlationId
@@ -105,6 +139,76 @@ public class FxpResponse {
 	 */
 	public void setComment(String comment) {
 		this.comment = comment;
+	}
+
+	/**
+	 * @return the filename
+	 */
+	public String getFilename() {
+		return filename;
+	}
+
+	/**
+	 * @param filename the filename to set
+	 */
+	public void setFilename(String filename) {
+		this.filename = filename;
+	}
+
+	/**
+	 * @return the directory
+	 */
+	public String getDirectory() {
+		return directory;
+	}
+
+	/**
+	 * @param directory the directory to set
+	 */
+	public void setDirectory(String directory) {
+		this.directory = directory;
+	}
+
+	/**
+	 * @return the sourceHost
+	 */
+	public String getSourceHost() {
+		return sourceHost;
+	}
+
+	/**
+	 * @param sourceHost the sourceHost to set
+	 */
+	public void setSourceHost(String sourceHost) {
+		this.sourceHost = sourceHost;
+	}
+
+	/**
+	 * @return the destinationHost
+	 */
+	public String getDestinationHost() {
+		return destinationHost;
+	}
+
+	/**
+	 * @param destinationHost the destinationHost to set
+	 */
+	public void setDestinationHost(String destinationHost) {
+		this.destinationHost = destinationHost;
+	}
+
+	/**
+	 * @return the timestamp
+	 */
+	public String getTimestamp() {
+		return timestamp;
+	}
+
+	/**
+	 * @param timestamp the timestamp to set
+	 */
+	public void setTimestamp(String timestamp) {
+		this.timestamp = timestamp;
 	}
 
 }

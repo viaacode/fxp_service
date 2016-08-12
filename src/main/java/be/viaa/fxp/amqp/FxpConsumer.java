@@ -1,5 +1,8 @@
 package be.viaa.fxp.amqp;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import be.viaa.amqp.AmqpJsonConsumer;
 import be.viaa.amqp.AmqpService;
 import be.viaa.amqp.util.JsonConverter;
@@ -42,7 +45,12 @@ public class FxpConsumer extends AmqpJsonConsumer<FxpRequest> {
 	@Override
 	public void success(AmqpService service, FxpRequest message) throws Exception {
 		FxpResponse response = new FxpResponse();
-		
+
+		response.setSourceHost(message.getSourceHost());
+		response.setFilename(message.getSourceFile());
+		response.setDirectory(message.getSourcePath());
+		response.setDestinationHost(message.getDestinationHost());
+		response.setTimestamp(getTimestamp());
 		response.setCorrelationId(message.getPid());
 		response.setPid(message.getPid());
 		response.setSourceFileRemoved(message.move());
@@ -55,8 +63,13 @@ public class FxpConsumer extends AmqpJsonConsumer<FxpRequest> {
 	public void exception(AmqpService service, Exception exception, FxpRequest message) {
 		FxpResponse response = new FxpResponse();
 		
-		response.setCorrelationId(message.getPid());
+		response.setSourceHost(message.getSourceHost());
+		response.setFilename(message.getSourceFile());
+		response.setDirectory(message.getSourcePath());
+		response.setDestinationHost(message.getDestinationHost());
+		response.setTimestamp(getTimestamp());
 		response.setPid(message.getPid());
+		response.setCorrelationId(message.getPid());
 		response.setSourceFileRemoved(false);
 		response.setOutcome("NOK");
 		response.setComment(exception.getMessage());
@@ -70,6 +83,15 @@ public class FxpConsumer extends AmqpJsonConsumer<FxpRequest> {
 			// TODO: is unreachable and this needs to be reported to inform that the RabbitMQ is down
 			ex.printStackTrace();
 		}
-	}	
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	private final String getTimestamp() {
+		SimpleDateFormat format = new SimpleDateFormat(FxpResponse.TIMESTAMP_FORMAT);
+		return format.format(new Date());
+	}
 
 }
