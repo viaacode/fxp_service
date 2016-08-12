@@ -54,6 +54,8 @@ public class Application {
 		try {
 			AmqpService service = new RabbitMQService(host, username, password);
 			AmqpPulseService poller = new AmqpPulseService(service);
+			
+			service.initialize();
 
 			poller.addListener("fxp_requests", new FxpConsumer());
 			poller.start();
