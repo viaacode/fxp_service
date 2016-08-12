@@ -207,10 +207,12 @@ public class FxpFileTransporter implements FileTransporter {
 				Thread.sleep(FILESIZE_COMPARE_INTERVAL);
 				long filesize = get(partFile, destination).getSize();
 				if (filesize == current_size.get()) {
-					// If these are equal, the file isn't transferring correctly
+					// If these are equal, the file hasn't progressed at all in 30 seconds
 					counter.incrementAndGet();
 				}
+				
 				current_size.set(filesize);
+				logger.info("Transfer progress: {}", ((float) current_size.get() * 100) / ((float) expected_size.get()));
 			}
 			
 			/*
