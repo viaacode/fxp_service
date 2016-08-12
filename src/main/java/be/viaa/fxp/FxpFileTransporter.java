@@ -203,7 +203,7 @@ public class FxpFileTransporter implements FileTransporter {
 			AtomicInteger counter = new AtomicInteger();
 			AtomicLong current_size = new AtomicLong();
 			AtomicLong expected_size = new AtomicLong(get(sourceFile, source).getSize());
-			while (current_size.get() != expected_size.get() && counter.get() >= FILESIZE_EQUAL_CHECKS) {
+			while (current_size.get() != expected_size.get() && counter.get() <= FILESIZE_EQUAL_CHECKS) {
 				Thread.sleep(FILESIZE_COMPARE_INTERVAL);
 				long filesize = get(partFile, destination).getSize();
 				if (filesize == current_size.get()) {
