@@ -1,7 +1,5 @@
 package be.viaa.util;
 
-import java.util.Objects;
-import java.util.StringJoiner;
 
 /**
  * Join methods "borrowed" from Java 8
@@ -49,8 +47,6 @@ public class Strings {
      * @since 1.8
      */
     public static String join(CharSequence delimiter, CharSequence... elements) {
-        Objects.requireNonNull(delimiter);
-        Objects.requireNonNull(elements);
         // Number of elements not likely worth Arrays.stream overhead.
         StringJoiner joiner = new StringJoiner(delimiter);
         for (CharSequence cs: elements) {
@@ -97,8 +93,6 @@ public class Strings {
      * @since 1.8
      */
 	public static String join(CharSequence delimiter, Iterable<? extends CharSequence> elements) {
-		Objects.requireNonNull(delimiter);
-		Objects.requireNonNull(elements);
 		StringJoiner joiner = new StringJoiner(delimiter);
 		for (CharSequence cs : elements) {
 			joiner.add(cs);
