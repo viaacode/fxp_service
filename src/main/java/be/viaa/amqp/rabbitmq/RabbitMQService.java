@@ -35,7 +35,7 @@ public class RabbitMQService implements AmqpService {
 		this.factory = factory;
 		this.connection = factory.newConnection();
 	}
-
+	
 	/**
 	 * @param host
 	 * @param username
@@ -62,6 +62,14 @@ public class RabbitMQService implements AmqpService {
 		this.factory = new ConnectionFactory();
 		this.factory.setHost(host);
 		this.connection = factory.newConnection();
+	}
+
+	@Override
+	public void initialize() throws Exception {
+		Channel channel = this.channel();
+
+		channel.queueDeclare("fxp_requests", true, false, false, null);
+		channel.queueDeclare("fxp_responses", true, false, false, null);
 	}
 
 	@Override

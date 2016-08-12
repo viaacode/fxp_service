@@ -55,7 +55,7 @@ public class Application {
 			AmqpService service = new RabbitMQService(host, username, password);
 			AmqpPulseService poller = new AmqpPulseService(service);
 
-			poller.addListener("viaa-test", new FxpConsumer());
+			poller.addListener("fxp_requests", new FxpConsumer());
 			poller.start();
 		} catch (Exception exception) {
 			System.out.println("Could not connect to the MQ server: " + exception.getMessage());

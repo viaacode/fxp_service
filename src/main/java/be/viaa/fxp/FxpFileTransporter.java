@@ -18,6 +18,7 @@ import org.apache.logging.log4j.Logger;
 
 import be.viaa.fxp.model.File;
 import be.viaa.fxp.model.Host;
+import be.viaa.util.Strings;
 
 /**
  * FXP implementation of a file transporter
@@ -257,12 +258,12 @@ public class FxpFileTransporter implements FileTransporter {
 		 * need to be created.
 		 */
 		while (!directory_structure.isEmpty()) {
-			if (!client.changeWorkingDirectory(String.join("/", directory_structure))) {
+			if (!client.changeWorkingDirectory(Strings.join("/", directory_structure))) {
 				directory_unexistant.addFirst(directory_structure.removeLast());
 			} else break;
 		}
 		
-		logger.debug("folders to be created: {}", String.join("/", directory_unexistant));
+		logger.debug("folders to be created: {}", Strings.join("/", directory_unexistant));
 
 		/*
 		 * Creates the directories that need to be created

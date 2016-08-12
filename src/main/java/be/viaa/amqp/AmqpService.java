@@ -9,6 +9,12 @@ import java.io.IOException;
  *
  */
 public interface AmqpService {
+	
+	/**
+	 * 
+	 * @throws Exception
+	 */
+	void initialize() throws Exception;
 
 	/**
 	 * 

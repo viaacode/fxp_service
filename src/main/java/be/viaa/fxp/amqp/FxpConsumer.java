@@ -48,7 +48,7 @@ public class FxpConsumer extends AmqpJsonConsumer<FxpRequest> {
 		response.setSourceFileRemoved(message.move());
 		response.setOutcome("OK");
 		
-		service.write("queue_name", JsonConverter.convert(response));
+		service.write("fxp_responses", JsonConverter.convert(response));
 	}
 
 	@Override
@@ -64,7 +64,7 @@ public class FxpConsumer extends AmqpJsonConsumer<FxpRequest> {
 		exception.printStackTrace();
 		
 		try {
-			service.write("queue_name", JsonConverter.convert(response));
+			service.write("fxp_responses", JsonConverter.convert(response));
 		} catch (Exception ex) {
 			// TODO: This exception needs to be monitored closely and logged pretty well, it means the queue
 			// TODO: is unreachable and this needs to be reported to inform that the RabbitMQ is down

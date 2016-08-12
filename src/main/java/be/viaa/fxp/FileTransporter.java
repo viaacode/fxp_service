@@ -2,8 +2,6 @@ package be.viaa.fxp;
 
 import java.io.IOException;
 
-import org.apache.commons.net.ftp.FTPClient;
-
 import be.viaa.fxp.model.File;
 import be.viaa.fxp.model.Host;
 
