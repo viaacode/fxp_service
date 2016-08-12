@@ -1,19 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="DEBUG">
+<Configuration status="INFO">
   <Appenders>
     <Console name="Console" target="SYSTEM_OUT">
       <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5level %logger{36} - %msg%n"/>
     </Console>
+    <File name="file_logger" fileName="/var/log/fxp.log">
+      <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5level %logger{36} - %msg%n"/>
+    </File>
+    
+    <Async name="async">
+    	<AppenderRef ref="file_logger" />
+    	<AppenderRef ref="Console" />
+    </Async>
   </Appenders>
   <Loggers>
+    <Root level="fatal">
+      <AppenderRef ref="async"/>
+    </Root>
     <Root level="error">
-      <AppenderRef ref="Console"/>
+      <AppenderRef ref="async"/>
+    </Root>
+    <Root level="warn">
+      <AppenderRef ref="async"/>
     </Root>
     <Root level="info">
-      <AppenderRef ref="Console"/>
+      <AppenderRef ref="async"/>
     </Root>
     <Root level="debug">
-      <AppenderRef ref="Console"/>
+      <AppenderRef ref="async"/>
     </Root>
   </Loggers>
 </Configuration>
