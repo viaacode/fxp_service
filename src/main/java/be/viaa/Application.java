@@ -37,9 +37,9 @@ public class Application {
 		/*
 		 * Read the properties file
 		 */
-		String properties_file = args.length == 2 && args[0].equals("-p") ? args[1] : "./fxp.properties";
+		String propertiesFile = args.length == 2 && args[0].equals("-p") ? args[1] : "./fxp.properties";
 		Properties properties = new Properties();
-		properties.load(new FileReader(new File(properties_file)));
+		properties.load(new FileReader(new File(propertiesFile)));
 		String host = properties.getProperty("mq.rabbit.host");
 		String username = properties.getProperty("mq.rabbit.username");
 		String password = properties.getProperty("mq.rabbit.password");

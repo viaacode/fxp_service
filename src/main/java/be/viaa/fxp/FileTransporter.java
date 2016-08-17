@@ -26,7 +26,7 @@ public interface FileTransporter {
 	 * @param destination
 	 * @param host
 	 */
-	void move(File source_file, File destination_file, Host host) throws IOException;
+	void move(File sourceFile, File destinationFile, Host host) throws IOException;
 	
 	/**
 	 * Deletes a file from the given host

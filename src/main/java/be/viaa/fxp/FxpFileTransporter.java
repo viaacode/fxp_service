@@ -68,7 +68,7 @@ public class FxpFileTransporter implements FileTransporter {
 		 * Attempt 10 times to transfer the file correctly
 		 */
 		for (int attempt = 0; attempt < MAX_RETRY_ATTEMPTS; attempt++) {
-			if (transfer_single(sourceFile, destinationFile, source, destination) == FxpStatus.OK) {
+			if (transferSingle(sourceFile, destinationFile, source, destination) == FxpStatus.OK) {
 				break;
 			}
 			else if (attempt + 1 >= MAX_RETRY_ATTEMPTS) {
@@ -90,14 +90,14 @@ public class FxpFileTransporter implements FileTransporter {
 	}
 
 	@Override
-	public void move(File source_file, File destination_file, Host host) throws IOException {
+	public void move(File sourceFile, File destinationFile, Host host) throws IOException {
 		FTPClient client = connect(host);
 		try {
 			logger.debug("attempting to move file");
 			logger.debug("Host: {}", host.getHost());
-			logger.debug("Directory: {}", source_file.getDirectory());
-			logger.debug("Source filename: {}", source_file.getName());
-			logger.debug("Target filename: {}", destination_file.getName());
+			logger.debug("Directory: {}", sourceFile.getDirectory());
+			logger.debug("Source filename: {}", sourceFile.getName());
+			logger.debug("Target filename: {}", destinationFile.getName());
 			
 			/*
 			 * Send the commands that indicate a transaction needs to happen
@@ -108,8 +108,8 @@ public class FxpFileTransporter implements FileTransporter {
 			 * Send the STOR and RETR commands to the corresponding FTP servers
 			 * TODO: Find out why this needs to be on a different thread.
 			 */
-			executor.submit(new FxpCommandThread(client, "RNFR " + source_file.getDirectory() + "/" + source_file.getName()));
-			executor.submit(new FxpCommandThread(client, "RNTO " + destination_file.getDirectory() + "/" + destination_file.getName()));
+			executor.submit(new FxpCommandThread(client, "RNFR " + sourceFile.getDirectory() + "/" + sourceFile.getName()));
+			executor.submit(new FxpCommandThread(client, "RNTO " + destinationFile.getDirectory() + "/" + destinationFile.getName()));
 		} catch (IOException ex) {
 			// TODO: Connection to the FTP server has gone wrong
 			logger.catching(ex);
@@ -166,9 +166,9 @@ public class FxpFileTransporter implements FileTransporter {
 		}
 	}
 
-	private FxpStatus transfer_single(File sourceFile, File destinationFile, Host source, Host destination) throws IOException {
-		FTPClient source_client = connect(source);
-		FTPClient target_client = connect(destination);
+	private FxpStatus transferSingle(File sourceFile, File destinationFile, Host source, Host destination) throws IOException {
+		FTPClient sourceClient = connect(source);
+		FTPClient targetClient = connect(destination);
 		File partFile = destinationFile.derive(destinationFile.getName() + ".part");
 		
 		try {
@@ -176,47 +176,47 @@ public class FxpFileTransporter implements FileTransporter {
 			 * Send the commands that indicate a transaction needs to happen
 			 * TODO: Rework to use short commands?
 			 */
-			target_client.sendCommand("TYPE I");
-			source_client.sendCommand("TYPE I");
-			target_client.sendCommand("PASV");
-			source_client.sendCommand("PORT " + filterPortNumber(target_client.getReplyString()));
+			targetClient.sendCommand("TYPE I");
+			sourceClient.sendCommand("TYPE I");
+			targetClient.sendCommand("PASV");
+			sourceClient.sendCommand("PORT " + filterPortNumber(targetClient.getReplyString()));
 			
 			/*
 			 * Transfer the file data
 			 */
-			createDirectoryTree(destinationFile, target_client);
-			createDirectoryTree(sourceFile, source_client);
+			createDirectoryTree(destinationFile, targetClient);
+			createDirectoryTree(sourceFile, sourceClient);
 			
 			/*
 			 * Send the STOR and RETR commands to the corresponding FTP servers.
 			 */
 			logger.debug("sending store and retreive commands");
-			executor.submit(new FxpCommandThread(target_client, "STOR " + partFile.getName()));
-			executor.submit(new FxpCommandThread(source_client, "RETR " + sourceFile.getName()));
+			executor.submit(new FxpCommandThread(targetClient, "STOR " + partFile.getName()));
+			executor.submit(new FxpCommandThread(sourceClient, "RETR " + sourceFile.getName()));
 			
 			/*
 			 * Periodically check the size of the partfile and compare it to the size of the file that
 			 * is being transferred.
 			 */
 			AtomicInteger counter = new AtomicInteger();
-			AtomicLong current_size = new AtomicLong();
-			AtomicLong expected_size = new AtomicLong(get(sourceFile, source).getSize());
-			while (current_size.get() != expected_size.get() && counter.get() <= FILESIZE_EQUAL_CHECKS) {
+			AtomicLong currentSize = new AtomicLong();
+			AtomicLong expectedSize = new AtomicLong(get(sourceFile, source).getSize());
+			while (currentSize.get() != expectedSize.get() && counter.get() <= FILESIZE_EQUAL_CHECKS) {
 				Thread.sleep(FILESIZE_COMPARE_INTERVAL);
 				long filesize = get(partFile, destination).getSize();
-				if (filesize == current_size.get()) {
+				if (filesize == currentSize.get()) {
 					// If these are equal, the file hasn't progressed at all in 30 seconds
 					counter.incrementAndGet();
 				}
 				
-				current_size.set(filesize);
-				logger.info("Transfer progress: {}", ((float) current_size.get() * 100) / ((float) expected_size.get()));
+				currentSize.set(filesize);
+				logger.info("Transfer progress: {}", ((float) currentSize.get() * 100) / ((float) expectedSize.get()));
 			}
 			
 			/*
 			 * Check to see if the file sizes are different
 			 */
-			if (expected_size.get() != get(partFile, destination).getSize()) {
+			if (expectedSize.get() != get(partFile, destination).getSize()) {
 				// TODO: the files have not successfully transferred
 				logger.warn("could not transfer file {}/{}", sourceFile.getDirectory(), sourceFile.getName());
 				return FxpStatus.ERROR;
@@ -234,8 +234,8 @@ public class FxpFileTransporter implements FileTransporter {
 			logger.catching(ex);
 			return FxpStatus.ERROR;
 		} finally {
-			source_client.disconnect();
-			target_client.disconnect();
+			sourceClient.disconnect();
+			targetClient.disconnect();
 		}
 	}
 
@@ -248,8 +248,8 @@ public class FxpFileTransporter implements FileTransporter {
 	 * @throws IOException
 	 */
 	private boolean createDirectoryTree(File file, FTPClient client) throws IOException {
-		Deque<String> directory_structure = new LinkedList<>(Arrays.asList(file.getDirectory().split("/")));
-		Deque<String> directory_unexistant = new LinkedList<>();
+		Deque<String> directoryStructure = new LinkedList<>(Arrays.asList(file.getDirectory().split("/")));
+		Deque<String> directoryUnexistant = new LinkedList<>();
 
 		logger.debug("creating directory tree for {}", file.getDirectory());
 		
@@ -257,18 +257,18 @@ public class FxpFileTransporter implements FileTransporter {
 		 * Scans to see which directory is already present and which directories
 		 * need to be created.
 		 */
-		while (!directory_structure.isEmpty()) {
-			if (!client.changeWorkingDirectory(Strings.join("/", directory_structure))) {
-				directory_unexistant.addFirst(directory_structure.removeLast());
+		while (!directoryStructure.isEmpty()) {
+			if (!client.changeWorkingDirectory(Strings.join("/", directoryStructure))) {
+				directoryUnexistant.addFirst(directoryStructure.removeLast());
 			} else break;
 		}
 		
-		logger.debug("folders to be created: {}", Strings.join("/", directory_unexistant));
+		logger.debug("folders to be created: {}", Strings.join("/", directoryUnexistant));
 
 		/*
 		 * Creates the directories that need to be created
 		 */
-		for (Iterator<String> iterator = directory_unexistant.iterator(); iterator.hasNext();) {
+		for (Iterator<String> iterator = directoryUnexistant.iterator(); iterator.hasNext();) {
 			String directory = iterator.next();
 
 			if (!client.makeDirectory(directory) || !client.changeWorkingDirectory(directory)) {
