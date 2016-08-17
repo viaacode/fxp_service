@@ -8,7 +8,7 @@ import java.util.Properties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import be.viaa.amqp.AmqpPulseService;
+import be.viaa.amqp.AmqpBatchService;
 import be.viaa.amqp.AmqpService;
 import be.viaa.amqp.rabbitmq.RabbitMQService;
 import be.viaa.fxp.amqp.FxpConsumer;
@@ -53,7 +53,7 @@ public class Application {
 
 		try {
 			AmqpService service = new RabbitMQService(host, username, password);
-			AmqpPulseService poller = new AmqpPulseService(service);
+			AmqpBatchService poller = new AmqpBatchService(service);
 			
 			service.initialize();
 

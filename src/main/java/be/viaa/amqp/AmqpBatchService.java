@@ -16,12 +16,12 @@ import org.apache.logging.log4j.Logger;
  * @author Hannes Lowette
  *
  */
-public class AmqpPulseService {
+public class AmqpBatchService {
 
 	/**
 	 * The logger for this class
 	 */
-	private static final Logger logger = LogManager.getLogger(AmqpPulseService.class);
+	private static final Logger logger = LogManager.getLogger(AmqpBatchService.class);
 
 	/**
 	 * The AMQP service
@@ -39,7 +39,7 @@ public class AmqpPulseService {
 	 * @param canceled
 	 * @param interval
 	 */
-	public AmqpPulseService(AmqpService service) {
+	public AmqpBatchService(AmqpService service) {
 		this.service = service;
 	}
 
