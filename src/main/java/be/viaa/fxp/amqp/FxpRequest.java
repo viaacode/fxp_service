@@ -1,5 +1,7 @@
 package be.viaa.fxp.amqp;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * An FXP request
  * 
@@ -11,51 +13,61 @@ public class FxpRequest {
 	/**
 	 * The path to the file on the source host (the directory tree)
 	 */
+	@SerializedName("source_path")
 	private String sourcePath;
 	
 	/**
 	 * The filename on the source remote
 	 */
+	@SerializedName("source_file")
 	private String sourceFile;
 	
 	/**
 	 * The source host address
 	 */
+	@SerializedName("source_host")
 	private String sourceHost;
 
 	/**
 	 * The username used to authenticate on the source host
 	 */
+	@SerializedName("source_user")
 	private String sourceUser;
 	
 	/**
 	 * The password to authenticate on the source host
 	 */
+	@SerializedName("source_password")
 	private String sourcePassword;
 
 	/**
 	 * The path to the file on the destination host (the directory tree)
 	 */
+	@SerializedName("destination_path")
 	private String destinationPath;
 	
 	/**
 	 * The filename on the destination host
 	 */
+	@SerializedName("destination_file")
 	private String destinationFile;
 	
 	/**
 	 * The destination host address
 	 */
+	@SerializedName("destination_host")
 	private String destinationHost;
 	
 	/**
 	 * The username of the destination host
 	 */
+	@SerializedName("destination_user")
 	private String destinationUser;
 	
 	/**
 	 * The password of the destination FTP host
 	 */
+	@SerializedName("destination_password")
 	private String destinationPassword;
 	
 	/**

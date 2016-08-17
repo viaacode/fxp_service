@@ -34,6 +34,7 @@ public class FxpResponse {
 	/**
 	 * Indicates the source has been removed or not
 	 */
+	@SerializedName("source_file_removed")
 	private boolean sourceFileRemoved;
 	
 	/**
