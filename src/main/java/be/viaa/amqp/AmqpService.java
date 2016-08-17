@@ -14,7 +14,7 @@ public interface AmqpService {
 	 * 
 	 * @throws Exception
 	 */
-	void initialize() throws Exception;
+	void createIfNotExists(String name) throws Exception;
 
 	/**
 	 * 

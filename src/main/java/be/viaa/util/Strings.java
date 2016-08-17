@@ -2,10 +2,9 @@ package be.viaa.util;
 
 
 /**
- * Join methods "borrowed" from Java 8
+ * "borrowed" from Java 8
  * 
  * @author Java 8
- *
  */
 public class Strings {
 
@@ -47,7 +46,6 @@ public class Strings {
      * @since 1.8
      */
     public static String join(CharSequence delimiter, CharSequence... elements) {
-        // Number of elements not likely worth Arrays.stream overhead.
         StringJoiner joiner = new StringJoiner(delimiter);
         for (CharSequence cs: elements) {
             joiner.add(cs);

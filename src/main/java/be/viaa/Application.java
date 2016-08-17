@@ -55,7 +55,8 @@ public class Application {
 			AmqpService service = new RabbitMQService(host, username, password);
 			AmqpBatchService poller = new AmqpBatchService(service);
 			
-			service.initialize();
+			service.createIfNotExists("fxp_requests");
+			service.createIfNotExists("fxp_responses");
 
 			poller.addListener("fxp_requests", new FxpConsumer());
 			poller.start();

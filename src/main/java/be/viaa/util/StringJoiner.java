@@ -25,6 +25,8 @@
 package be.viaa.util;
 
 /**
+ * "Borrowed" from Java 8
+ * 
  * {@code StringJoiner} is used to construct a sequence of characters separated
  * by a delimiter and optionally starting with a supplied prefix
  * and ending with a supplied suffix.

@@ -65,11 +65,8 @@ public class RabbitMQService implements AmqpService {
 	}
 
 	@Override
-	public void initialize() throws Exception {
-		Channel channel = this.channel();
-
-		channel.queueDeclare("fxp_requests", true, false, false, null);
-		channel.queueDeclare("fxp_responses", true, false, false, null);
+	public void createIfNotExists(String name) throws Exception {
+		this.channel().queueDeclare(name, true, false, false, null);
 	}
 
 	@Override
