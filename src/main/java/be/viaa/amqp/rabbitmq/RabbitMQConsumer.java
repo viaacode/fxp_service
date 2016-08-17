@@ -40,8 +40,6 @@ public class RabbitMQConsumer extends DefaultConsumer {
 
 	@Override
 	public void handleDelivery(String consumerTag, Envelope envelope, BasicProperties properties, byte[] body) throws IOException {
-		
-		
 		try {
 			consumer.accept(service, body);
 			consumer.success(service, body);
