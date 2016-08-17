@@ -1,4 +1,4 @@
-package be.viaa.fxp.amqp;
+package be.viaa.fxp;
 
 /**
  * Exception for anything FXP related

@@ -2,7 +2,7 @@ package be.viaa.fxp;
 
 import org.apache.commons.net.ftp.FTPClient;
 
-import be.viaa.amqp.util.VerboseCallable;
+import be.viaa.util.VerboseCallable;
 
 /**
  * Thread to write an FXP command asynchronously

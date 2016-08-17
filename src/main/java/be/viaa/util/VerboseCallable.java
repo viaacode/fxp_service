@@ -1,4 +1,4 @@
-package be.viaa.amqp.util;
+package be.viaa.util;
 
 import java.util.concurrent.Callable;
 

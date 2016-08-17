@@ -1,4 +1,4 @@
-package be.viaa.fxp.model;
+package be.viaa.fxp;
 
 /**
  * Contains the information required to connect to a remote FTP service

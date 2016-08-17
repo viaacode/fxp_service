@@ -1,4 +1,4 @@
-package be.viaa.fxp.model;
+package be.viaa.fxp;
 
 /**
  * Represents a file on a remote FTP host

@@ -1,4 +1,4 @@
-package be.viaa.amqp.util;
+package be.viaa.util;
 
 import com.google.gson.Gson;
 
@@ -8,7 +8,7 @@ import com.google.gson.Gson;
  * @author Hannes Lowette
  *
  */
-public class JsonConverter {
+public class GsonUtil {
 	
 	/**
 	 * The GSON object to convert POJO to JSON.

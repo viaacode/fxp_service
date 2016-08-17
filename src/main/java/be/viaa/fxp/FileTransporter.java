@@ -2,9 +2,6 @@ package be.viaa.fxp;
 
 import java.io.IOException;
 
-import be.viaa.fxp.model.File;
-import be.viaa.fxp.model.Host;
-
 /**
  * 
  * @author Hannes Lowette

@@ -5,11 +5,11 @@ import java.util.Date;
 
 import be.viaa.amqp.AmqpJsonConsumer;
 import be.viaa.amqp.AmqpService;
-import be.viaa.amqp.util.JsonConverter;
+import be.viaa.fxp.File;
 import be.viaa.fxp.FileTransporter;
 import be.viaa.fxp.FxpFileTransporter;
-import be.viaa.fxp.model.File;
-import be.viaa.fxp.model.Host;
+import be.viaa.fxp.Host;
+import be.viaa.util.GsonUtil;
 
 /**
  * AMQP consumer for FXP messages
@@ -56,7 +56,7 @@ public class FxpConsumer extends AmqpJsonConsumer<FxpRequest> {
 		response.setSourceFileRemoved(message.move());
 		response.setOutcome("OK");
 		
-		service.write("fxp_responses", JsonConverter.convert(response));
+		service.write("fxp_responses", GsonUtil.convert(response));
 	}
 
 	@Override
@@ -77,7 +77,7 @@ public class FxpConsumer extends AmqpJsonConsumer<FxpRequest> {
 		exception.printStackTrace();
 		
 		try {
-			service.write("fxp_responses", JsonConverter.convert(response));
+			service.write("fxp_responses", GsonUtil.convert(response));
 		} catch (Exception ex) {
 			// TODO: This exception needs to be monitored closely and logged pretty well, it means the queue
 			// TODO: is unreachable and this needs to be reported to inform that the RabbitMQ is down

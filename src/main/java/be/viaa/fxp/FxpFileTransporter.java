@@ -16,8 +16,6 @@ import org.apache.commons.net.ftp.FTPFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import be.viaa.fxp.model.File;
-import be.viaa.fxp.model.Host;
 import be.viaa.util.Strings;
 
 /**
