@@ -1,6 +1,10 @@
 package be.viaa.amqp;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
 /**
  * Converts an AMQP JSON message to a POJO
@@ -10,6 +14,8 @@ import com.google.gson.Gson;
  * @param <T>
  */
 public abstract class AmqpJsonConsumer<T> implements AmqpConsumer {
+	
+	private static final Logger logger = LogManager.getLogger(AmqpJsonConsumer.class);
 
 	/**
 	 * The gson instance to convert POJO to JSON
@@ -49,7 +55,11 @@ public abstract class AmqpJsonConsumer<T> implements AmqpConsumer {
 	 */
 	@Override
 	public void exception(AmqpService service, Exception exception, byte[] data) {
-		exception(service, exception, gson.fromJson(new String(data), type));
+		try {
+			exception(service, exception, gson.fromJson(new String(data), type));
+		} catch (JsonSyntaxException ex) {
+			logger.error("Malformed JSON received: {}", new String(data));
+		}
 	}
 
 	/**
