@@ -37,7 +37,7 @@ public class Application {
 		/*
 		 * Read the properties file
 		 */
-		String propertiesFile = args.length == 2 && args[0].equals("-p") ? args[1] : "./fxp.properties";
+		String propertiesFile = args.length == 2 && args[0].equals("-p") ? args[1] : "./application.properties";
 		Properties properties = new Properties();
 		properties.load(new FileReader(new File(propertiesFile)));
 		String host = properties.getProperty("mq.rabbit.host");
@@ -61,7 +61,8 @@ public class Application {
 			poller.addListener("fxp_requests", new FxpConsumer());
 			poller.start();
 		} catch (Exception exception) {
-			System.out.println("Could not connect to the MQ server: " + exception.getMessage());
+			logger.fatal("Could not connect to the MQ server: " + exception.getMessage());
+			logger.catching(exception);
 		}
 	}
 
