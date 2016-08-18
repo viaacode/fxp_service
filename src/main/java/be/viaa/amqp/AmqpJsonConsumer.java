@@ -15,6 +15,9 @@ import com.google.gson.JsonSyntaxException;
  */
 public abstract class AmqpJsonConsumer<T> implements AmqpConsumer {
 	
+	/**
+	 * static logger for this class
+	 */
 	private static final Logger logger = LogManager.getLogger(AmqpJsonConsumer.class);
 
 	/**
@@ -58,7 +61,7 @@ public abstract class AmqpJsonConsumer<T> implements AmqpConsumer {
 		try {
 			exception(service, exception, gson.fromJson(new String(data), type));
 		} catch (JsonSyntaxException ex) {
-			logger.error("Malformed JSON received: {}", new String(data));
+			logger.error("Malformed JSON received: {}\n{}", ex.getMessage(), new String(data));
 		}
 	}
 

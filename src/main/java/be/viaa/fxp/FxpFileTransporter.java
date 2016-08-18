@@ -99,17 +99,23 @@ public class FxpFileTransporter implements FileTransporter {
 			logger.debug("Source filename: {}", sourceFile.getName());
 			logger.debug("Target filename: {}", destinationFile.getName());
 			
-			/*
-			 * Send the commands that indicate a transaction needs to happen
-			 */
-			client.sendCommand("TYPE I");
-
-			/*
-			 * Send the STOR and RETR commands to the corresponding FTP servers
-			 * TODO: Find out why this needs to be on a different thread.
-			 */
-			executor.submit(new FxpCommandThread(client, "RNFR " + sourceFile.getDirectory() + "/" + sourceFile.getName()));
-			executor.submit(new FxpCommandThread(client, "RNTO " + destinationFile.getDirectory() + "/" + destinationFile.getName()));
+//			/*
+//			 * Send the commands that indicate a transaction needs to happen
+//			 */
+//			client.sendCommand("TYPE I");
+//
+//			/*
+//			 * Send the STOR and RETR commands to the corresponding FTP servers
+//			 * TODO: Find out why this needs to be on a different thread.
+//			 */
+//			executor.submit(new FxpCommandThread(client, "RNFR " + sourceFile.getDirectory() + "/" + sourceFile.getName()));
+//			executor.submit(new FxpCommandThread(client, "RNTO " + destinationFile.getDirectory() + "/" + destinationFile.getName()));
+			if (client.rename(sourceFile.getDirectory() + "/" + sourceFile.getName(), destinationFile.getDirectory() + "/" + destinationFile.getName())) {
+				logger.info("successfully moved file from directory '{}' to '{}'", sourceFile.getDirectory(), destinationFile.getDirectory());
+			}
+			else {
+				throw new IOException("could not move file '" + sourceFile.getDirectory() + "/" + sourceFile.getName() + "'");
+			}
 		} catch (IOException ex) {
 			// TODO: Connection to the FTP server has gone wrong
 			logger.catching(ex);

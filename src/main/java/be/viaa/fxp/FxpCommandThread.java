@@ -1,6 +1,8 @@
 package be.viaa.fxp;
 
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import be.viaa.util.VerboseCallable;
 
@@ -11,6 +13,11 @@ import be.viaa.util.VerboseCallable;
  *
  */
 public class FxpCommandThread extends VerboseCallable<Integer> {
+	
+	/**
+	 * The logger for this class, mainly used to log the exceptions that occur during the execution of the command
+	 */
+	private static final Logger logger = LogManager.getLogger(FxpCommandThread.class);
 
 	/**
 	 * The client that this service needs to send the command to
@@ -38,8 +45,7 @@ public class FxpCommandThread extends VerboseCallable<Integer> {
 
 	@Override
 	protected void exception(Exception ex) {
-		// TODO: Exception handling
-		ex.printStackTrace();
+		logger.catching(ex);
 	}
 
 }
