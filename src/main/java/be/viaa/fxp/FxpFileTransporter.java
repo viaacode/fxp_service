@@ -114,7 +114,7 @@ public class FxpFileTransporter implements FileTransporter {
 				logger.info("successfully moved file from directory '{}' to '{}'", sourceFile.getDirectory(), destinationFile.getDirectory());
 			}
 			else {
-				throw new IOException("could not move file '" + sourceFile.getDirectory() + "/" + sourceFile.getName() + "'");
+				throw new IOException("could not move file '" + sourceFile.getDirectory() + "/" + sourceFile.getName() + "' - " + client.getReplyString());
 			}
 		} catch (IOException ex) {
 			// TODO: Connection to the FTP server has gone wrong
