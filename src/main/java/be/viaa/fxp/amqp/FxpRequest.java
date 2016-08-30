@@ -73,7 +73,8 @@ public class FxpRequest {
 	/**
 	 * The PID
 	 */
-	private String pid;
+	@SerializedName("correlation_id")
+	private String correlationId;
 	
 	/**
 	 * Indicates the source file needs to be removed or not
@@ -231,21 +232,6 @@ public class FxpRequest {
 	}
 
 	/**
-	 * @return the pid
-	 */
-	public String getPid() {
-		return pid;
-	}
-
-	/**
-	 * @param pid
-	 *            the pid to set
-	 */
-	public void setPid(String pid) {
-		this.pid = pid;
-	}
-
-	/**
 	 * @return the move
 	 */
 	public boolean move() {
@@ -257,6 +243,20 @@ public class FxpRequest {
 	 */
 	public void setMove(boolean move) {
 		this.move = move;
+	}
+
+	/**
+	 * @return the correlationId
+	 */
+	public String getCorrelationId() {
+		return correlationId;
+	}
+
+	/**
+	 * @param correlationId the correlationId to set
+	 */
+	public void setCorrelationId(String correlationId) {
+		this.correlationId = correlationId;
 	}
 
 }

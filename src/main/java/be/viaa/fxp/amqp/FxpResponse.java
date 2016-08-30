@@ -22,11 +22,6 @@ public class FxpResponse {
 	private String correlationId;
 	
 	/**
-	 * The PID of the processed file
-	 */
-	private String pid;
-	
-	/**
 	 * The status from the FxpResponse
 	 */
 	private String outcome;
@@ -84,20 +79,6 @@ public class FxpResponse {
 	 */
 	public void setCorrelationId(String correlationId) {
 		this.correlationId = correlationId;
-	}
-
-	/**
-	 * @return the pid
-	 */
-	public String getPid() {
-		return pid;
-	}
-
-	/**
-	 * @param pid the pid to set
-	 */
-	public void setPid(String pid) {
-		this.pid = pid;
 	}
 
 	/**
