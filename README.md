@@ -16,5 +16,7 @@ Microservice that transfers a file between two servers, triggered by RabbitMQ me
    "destination_password": "password",
    "destination_file": "file.txt",
    "destination_path": "/home/test/"
+   "correlation_id": "some_id", (optional)
+   "move": "true" (optional)
 }
 ```
