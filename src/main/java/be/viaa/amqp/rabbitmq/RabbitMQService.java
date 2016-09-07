@@ -73,6 +73,7 @@ public class RabbitMQService implements AmqpService {
 	public void read(String queue, AmqpConsumer consumer) throws IOException {
 		Channel channel = this.channel();
 		
+		channel.basicQos(1);
 		channel.basicConsume(queue, false, new RabbitMQConsumer(channel, this, consumer));
 	}
 
