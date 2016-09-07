@@ -43,6 +43,8 @@ public class RabbitMQConsumer extends DefaultConsumer {
 		try {
 			consumer.accept(service, body);
 			consumer.success(service, body);
+			
+			getChannel().basicAck(envelope.getDeliveryTag(), false);
 		} catch (Exception exception) {
 			consumer.exception(service, exception, body);
 		}
