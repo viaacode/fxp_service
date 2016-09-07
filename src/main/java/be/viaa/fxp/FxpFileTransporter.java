@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -44,7 +45,7 @@ public class FxpFileTransporter implements FileTransporter {
 	/**
 	 * The interval in between 2 file size checks
 	 */
-	private static final long FILESIZE_COMPARE_INTERVAL = 30000L;
+	private static final long FILESIZE_COMPARE_INTERVAL = 10000L;
 	
 	/**
 	 * The executor service
@@ -68,11 +69,14 @@ public class FxpFileTransporter implements FileTransporter {
 		 * Attempt 10 times to transfer the file correctly
 		 */
 		for (int attempt = 0; attempt < MAX_RETRY_ATTEMPTS; attempt++) {
-			if (transferSingle(sourceFile, destinationFile, source, destination) == FxpStatus.OK) {
+			if ((status = transferSingle(sourceFile, destinationFile, source, destination)) == FxpStatus.OK) {
 				break;
 			}
 			else if (attempt + 1 >= MAX_RETRY_ATTEMPTS) {
 				throw new IOException("file could not be transferred");
+			}
+			else {
+				logger.info("RETRY {}", attempt);
 			}
 			try {
 				Thread.sleep(10000L);
@@ -111,7 +115,7 @@ public class FxpFileTransporter implements FileTransporter {
 //			executor.submit(new FxpCommandThread(client, "RNFR " + sourceFile.getDirectory() + "/" + sourceFile.getName()));
 //			executor.submit(new FxpCommandThread(client, "RNTO " + destinationFile.getDirectory() + "/" + destinationFile.getName()));
 			if (client.rename(sourceFile.getDirectory() + "/" + sourceFile.getName(), destinationFile.getDirectory() + "/" + destinationFile.getName())) {
-				logger.info("successfully moved file from directory '{}' to '{}'", sourceFile.getDirectory(), destinationFile.getDirectory());
+				logger.info("SUCCESS: moved file from directory '{}' to '{}'", sourceFile.getDirectory(), destinationFile.getDirectory());
 			}
 			else {
 				throw new IOException("could not move file '" + sourceFile.getDirectory() + "/" + sourceFile.getName() + "' - " + client.getReplyString());
@@ -147,6 +151,9 @@ public class FxpFileTransporter implements FileTransporter {
 			if (!client.deleteFile(file.getName())) {
 				throw new IOException("could not delete " + file.getDirectory() + "/" + file.getName());
 			}
+			else {
+				logger.info("SUCCESS: file {}/{} successfully deleted", file.getDirectory(), file.getName());
+			}
 		} catch (IOException ex) {
 			// TODO: Connection to the FTP server has gone wrong
 			logger.catching(ex);
@@ -166,7 +173,7 @@ public class FxpFileTransporter implements FileTransporter {
 		try {
 			client.changeWorkingDirectory(source.getDirectory());
 			client.rename(source.getName(), destination.getName());
-			logger.info("successfully renamed file '{}/{}'", source.getDirectory(), source.getName());
+			logger.info("SUCCESS: renamed file '{}/{}'", source.getDirectory(), source.getName());
 		} finally {
 			client.disconnect();
 		}
@@ -175,6 +182,8 @@ public class FxpFileTransporter implements FileTransporter {
 	private FxpStatus transferSingle(File sourceFile, File destinationFile, Host source, Host destination) throws IOException {
 		FTPClient sourceClient = connect(source);
 		FTPClient targetClient = connect(destination);
+		Future<?> future_source = null;
+		Future<?> future_destination = null;
 		File partFile = destinationFile.derive(destinationFile.getName() + ".part");
 		
 		try {
@@ -197,8 +206,8 @@ public class FxpFileTransporter implements FileTransporter {
 			 * Send the STOR and RETR commands to the corresponding FTP servers.
 			 */
 			logger.debug("sending store and retreive commands");
-			executor.submit(new FxpCommandThread(targetClient, "STOR " + partFile.getName()));
-			executor.submit(new FxpCommandThread(sourceClient, "RETR " + sourceFile.getName()));
+			future_destination = executor.submit(new FxpCommandThread(targetClient, "STOR " + partFile.getName()));
+			future_source = executor.submit(new FxpCommandThread(sourceClient, "RETR " + sourceFile.getName()));
 			
 			/*
 			 * Periodically check the size of the partfile and compare it to the size of the file that
@@ -224,7 +233,7 @@ public class FxpFileTransporter implements FileTransporter {
 			 */
 			if (expectedSize.get() != get(partFile, destination).getSize()) {
 				// TODO: the files have not successfully transferred
-				logger.warn("could not transfer file {}/{}", sourceFile.getDirectory(), sourceFile.getName());
+				logger.warn("ERROR: could not transfer file {}/{}", sourceFile.getDirectory(), sourceFile.getName());
 				return FxpStatus.ERROR;
 			}
 			
@@ -233,7 +242,7 @@ public class FxpFileTransporter implements FileTransporter {
 			 */
 			else {
 				rename(partFile, destinationFile, destination);
-				logger.info("file transferred successfully");
+				logger.info("SUCCESS: file {}/{} transferred", sourceFile.getDirectory(), sourceFile.getName());
 				return FxpStatus.OK;
 			}
 		} catch (Exception ex) {
@@ -242,6 +251,8 @@ public class FxpFileTransporter implements FileTransporter {
 		} finally {
 			sourceClient.disconnect();
 			targetClient.disconnect();
+			future_source.cancel(true);
+			future_destination.cancel(true);
 		}
 	}
 
