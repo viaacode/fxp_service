@@ -42,6 +42,7 @@ public abstract class AmqpJsonConsumer<T> implements AmqpConsumer {
 	 */
 	@Override
 	public void accept(AmqpService service, byte[] data) throws Exception {
+		logger.info("Message received: {}", new String(data));
 		this.accept(service, gson.fromJson(new String(data), type));
 	}
 
