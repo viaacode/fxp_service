@@ -344,17 +344,21 @@ public class FxpFileTransporter implements FileTransporter {
 	 * @return
 	 */
 	private FTPFile get(File file, Host host) throws IOException {
-		logger.debug("looking up file {}/{} on {}:{}", file.getDirectory(), file.getName(), host.getHost(), host.getPort());
 		FTPClient client = connect(host);
-		client.changeWorkingDirectory(file.getDirectory());
-		FTPFile[] files = client.listFiles(file.getName());
-		if (files == null || files.length == 0) {
-			throw new FileNotFoundException("file '" + file.getDirectory() + "/" + file.getName() + "' not found on '" + client.getRemoteAddress().getHostAddress() + "'");
+		try {
+			logger.debug("looking up file {}/{} on {}:{}", file.getDirectory(), file.getName(), host.getHost(), host.getPort());
+			client.changeWorkingDirectory(file.getDirectory());
+			FTPFile[] files = client.listFiles(file.getName());
+			if (files == null || files.length == 0) {
+				throw new FileNotFoundException("file '" + file.getDirectory() + "/" + file.getName() + "' not found on '" + client.getRemoteAddress().getHostAddress() + "'");
+			}
+			if (files.length == 1) {
+				return files[0];
+			}
+			throw new FileNotFoundException("ambiguous filename");
+		} finally {
+			client.disconnect();
 		}
-		if (files.length == 1) {
-			return files[0];
-		}
-		throw new FileNotFoundException("ambiguous filename");
 	}
 	
 	/**
