@@ -1,5 +1,6 @@
 package be.viaa.amqp;
 
+import com.rabbitmq.client.Channel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -50,17 +51,17 @@ public abstract class AmqpJsonConsumer<T> implements AmqpConsumer {
 	 * @see be.viaa.amqp.AmqpConsumer#success(be.viaa.amqp.AmqpService, java.lang.byte[])
 	 */
 	@Override
-	public void success(AmqpService service, byte[] data) throws Exception {
-		this.success(service, gson.fromJson(new String(data), type));
+	public void success(AmqpService service, byte[] data, Channel channel) throws Exception {
+		this.success(service, gson.fromJson(new String(data), type), channel);
 	}
 
 	/* (non-Javadoc)
 	 * @see be.viaa.amqp.AmqpConsumer#exception(be.viaa.amqp.AmqpService, java.lang.Exception)
 	 */
 	@Override
-	public void exception(AmqpService service, Exception exception, byte[] data) {
+	public void exception(AmqpService service, Exception exception, byte[] data, Channel channel) {
 		try {
-			exception(service, exception, gson.fromJson(new String(data), type));
+			exception(service, exception, gson.fromJson(new String(data), type), channel);
 		} catch (JsonSyntaxException ex) {
 			logger.error("Malformed JSON received: {}\n{}", ex.getMessage(), new String(data));
 		}
@@ -80,7 +81,7 @@ public abstract class AmqpJsonConsumer<T> implements AmqpConsumer {
 	 * @param service
 	 * @param object
 	 */
-	protected abstract void success(AmqpService service, T message) throws Exception;
+	protected abstract void success(AmqpService service, T message, Channel channel) throws Exception;
 
 	/**
 	 * Called when the JSON message has been parsed into a POJO
@@ -88,6 +89,6 @@ public abstract class AmqpJsonConsumer<T> implements AmqpConsumer {
 	 * @param service
 	 * @param object
 	 */
-	protected abstract void exception(AmqpService service, Exception exception, T message);
+	protected abstract void exception(AmqpService service, Exception exception, T message, Channel channel);
 
 }

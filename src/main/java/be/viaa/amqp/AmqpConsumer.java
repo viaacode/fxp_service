@@ -1,5 +1,7 @@
 package be.viaa.amqp;
 
+import com.rabbitmq.client.Channel;
+
 /**
  * Consumes an AMQP message
  * 
@@ -21,7 +23,7 @@ public interface AmqpConsumer {
 	 * 
 	 * @param service
 	 */
-	void success(AmqpService service, byte[] data) throws Exception;
+	void success(AmqpService service, byte[] data, Channel channel) throws Exception;
 
 	/**
 	 * Called when an exception has occurred in the accept method
@@ -29,6 +31,6 @@ public interface AmqpConsumer {
 	 * @param service
 	 * @param exception
 	 */
-	void exception(AmqpService service, Exception exception, byte[] data);
+	void exception(AmqpService service, Exception exception, byte[] data, Channel channel);
 
 }
