@@ -1,3 +1,6 @@
+### Status
+[![Build Status](https://travis-ci.org/viaacode/fxp_service.png)](https://travis-ci.org/viaacode/fxp_service)
+
 # fxp_service
 Microservice that transfers a file between two servers, triggered by RabbitMQ messages
 
