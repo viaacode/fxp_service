@@ -51,6 +51,8 @@ public class FxpConsumer extends AmqpJsonConsumer<FxpRequest> {
 		response.setFilename(message.getSourceFile());
 		response.setDirectory(message.getSourcePath());
 		response.setDestinationHost(message.getDestinationHost());
+		response.setDestinationFilename(message.getDestinationFile());
+		response.setDestinationDirectory(message.getDestinationPath());
 		response.setTimestamp(getTimestamp());
 		response.setCorrelationId(message.getCorrelationId());
 		response.setSourceFileRemoved(message.move());
@@ -67,6 +69,8 @@ public class FxpConsumer extends AmqpJsonConsumer<FxpRequest> {
 		response.setFilename(message.getSourceFile());
 		response.setDirectory(message.getSourcePath());
 		response.setDestinationHost(message.getDestinationHost());
+		response.setDestinationFilename(message.getDestinationFile());
+		response.setDestinationDirectory(message.getDestinationPath());
 		response.setTimestamp(getTimestamp());
 		response.setCorrelationId(message.getCorrelationId());
 		response.setSourceFileRemoved(false);
