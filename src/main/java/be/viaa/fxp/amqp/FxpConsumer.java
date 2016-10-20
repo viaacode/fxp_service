@@ -10,6 +10,7 @@ import be.viaa.fxp.FileTransporter;
 import be.viaa.fxp.FxpFileTransporter;
 import be.viaa.fxp.Host;
 import be.viaa.util.GsonUtil;
+import com.rabbitmq.client.Channel;
 
 /**
  * AMQP consumer for FXP messages
@@ -43,29 +44,33 @@ public class FxpConsumer extends AmqpJsonConsumer<FxpRequest> {
 	}
 
 	@Override
-	public void success(AmqpService service, FxpRequest message) throws Exception {
+	public void success(AmqpService service, FxpRequest message, Channel channel) throws Exception {
 		FxpResponse response = new FxpResponse();
 
 		response.setSourceHost(message.getSourceHost());
 		response.setFilename(message.getSourceFile());
 		response.setDirectory(message.getSourcePath());
 		response.setDestinationHost(message.getDestinationHost());
+		response.setDestinationFilename(message.getDestinationFile());
+		response.setDestinationDirectory(message.getDestinationPath());
 		response.setTimestamp(getTimestamp());
 		response.setCorrelationId(message.getCorrelationId());
 		response.setSourceFileRemoved(message.move());
 		response.setOutcome("OK");
 		
-		service.write("fxp_responses", GsonUtil.convert(response));
+		service.write("fxp_responses", GsonUtil.convert(response), channel);
 	}
 
 	@Override
-	public void exception(AmqpService service, Exception exception, FxpRequest message) {
+	public void exception(AmqpService service, Exception exception, FxpRequest message, Channel channel) {
 		FxpResponse response = new FxpResponse();
 		
 		response.setSourceHost(message.getSourceHost());
 		response.setFilename(message.getSourceFile());
 		response.setDirectory(message.getSourcePath());
 		response.setDestinationHost(message.getDestinationHost());
+		response.setDestinationFilename(message.getDestinationFile());
+		response.setDestinationDirectory(message.getDestinationPath());
 		response.setTimestamp(getTimestamp());
 		response.setCorrelationId(message.getCorrelationId());
 		response.setSourceFileRemoved(false);
@@ -75,7 +80,7 @@ public class FxpConsumer extends AmqpJsonConsumer<FxpRequest> {
 		exception.printStackTrace();
 		
 		try {
-			service.write("fxp_responses", GsonUtil.convert(response));
+			service.write("fxp_responses", GsonUtil.convert(response), channel);
 		} catch (Exception ex) {
 			// TODO: This exception needs to be monitored closely and logged pretty well, it means the queue
 			// TODO: is unreachable and this needs to be reported to inform that the RabbitMQ is down

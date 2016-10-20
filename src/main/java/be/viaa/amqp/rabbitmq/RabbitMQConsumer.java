@@ -1,6 +1,7 @@
 package be.viaa.amqp.rabbitmq;
 
 import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.DefaultConsumer;
@@ -42,13 +43,14 @@ public class RabbitMQConsumer extends DefaultConsumer {
 	public void handleDelivery(String consumerTag, Envelope envelope, BasicProperties properties, byte[] body) throws IOException {
 		try {
 			consumer.accept(service, body);
-			consumer.success(service, body);
+			consumer.success(service, body, getChannel());
 		} catch (Exception exception) {
-			consumer.exception(service, exception, body);
+			consumer.exception(service, exception, body, getChannel());
 		}
 		finally {
 			getChannel().basicAck(envelope.getDeliveryTag(), false);
 		}
 	}
+
 
 }

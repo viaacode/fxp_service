@@ -61,6 +61,10 @@ public class AmqpBatchService {
 		}
 	}
 
+	public Map<String, List<AmqpConsumer>> getConsumers() {
+		return consumers;
+	}
+
 	/**
 	 * Adds a listener to the collection
 	 * 

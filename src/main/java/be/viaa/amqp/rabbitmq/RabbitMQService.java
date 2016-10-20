@@ -70,16 +70,18 @@ public class RabbitMQService implements AmqpService {
 	}
 
 	@Override
-	public void read(String queue, AmqpConsumer consumer) throws IOException {
-		Channel channel = this.channel();
-		
+	public void read(String queue, AmqpConsumer consumer) throws IOException, TimeoutException {
+		Channel channel = null;
+
+		channel = this.channel();
 		channel.basicQos(1);
 		channel.basicConsume(queue, false, new RabbitMQConsumer(channel, this, consumer));
+
 	}
 
 	@Override
-	public void write(String queue, byte[] data) throws IOException {
-		this.channel().basicPublish("", queue, null, data);
+	public void write(String queue, byte[] data, Channel channel) throws IOException {
+		channel.basicPublish("", queue, null, data);
 	}
 
 	@Override

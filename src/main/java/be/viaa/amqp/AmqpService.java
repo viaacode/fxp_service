@@ -1,6 +1,9 @@
 package be.viaa.amqp;
 
+import com.rabbitmq.client.Channel;
+
 import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Abstract AMQP service representation
@@ -21,13 +24,13 @@ public interface AmqpService {
 	 * @param queue
 	 * @param consumer
 	 */
-	void read(String queue, AmqpConsumer consumer) throws IOException;
+	void read(String queue, AmqpConsumer consumer) throws IOException, TimeoutException;
 
 	/**
 	 * 
 	 * @param queue
 	 * @param data
 	 */
-	void write(String queue, byte[] data) throws IOException;
+	void write(String queue, byte[] data, Channel channel) throws IOException;
 
 }

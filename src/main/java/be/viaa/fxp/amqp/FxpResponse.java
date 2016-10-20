@@ -55,7 +55,19 @@ public class FxpResponse {
 	 */
 	@SerializedName("source_host")
 	private String sourceHost;
-	
+
+	/**
+	 * The filename of the source file
+	 */
+	@SerializedName("destination_name")
+	private String destinationFilename;
+
+	/**
+	 * The directory of the source file
+	 */
+	@SerializedName("destination_path")
+	private String destinationDirectory;
+
 	/**
 	 * The destination FTP host
 	 */
@@ -149,6 +161,34 @@ public class FxpResponse {
 	 */
 	public void setDirectory(String directory) {
 		this.directory = directory;
+	}
+
+	/**
+	 * @return the destination filename
+     */
+	public String getDestinationFilename() {
+		return destinationFilename;
+	}
+
+	/**
+	 * @param destinationFilename the destination filename to set
+     */
+	public void setDestinationFilename(String destinationFilename) {
+		this.destinationFilename = destinationFilename;
+	}
+
+	/**
+	 * @return the destination directory
+     */
+	public String getDestinationDirectory() {
+		return destinationDirectory;
+	}
+
+	/**
+	 * @param destinationDirectory the destination directory to set
+     */
+	public void setDestinationDirectory(String destinationDirectory) {
+		this.destinationDirectory = destinationDirectory;
 	}
 
 	/**
