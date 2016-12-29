@@ -9,6 +9,8 @@ import com.rabbitmq.client.ConnectionFactory;
 
 import be.viaa.amqp.AmqpConsumer;
 import be.viaa.amqp.AmqpService;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * RabbitMQ AMQP implementation
