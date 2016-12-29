@@ -66,7 +66,9 @@ public class RabbitMQService implements AmqpService {
 
 	@Override
 	public void createIfNotExists(String name) throws Exception {
-		this.channel().queueDeclare(name, true, false, false, null);
+		Map<String, Object> args = new HashMap<String, Object>();
+    		args.put("x-max-priority", 10);
+		this.channel().queueDeclare(name, true, false, false, args);
 	}
 
 	@Override
