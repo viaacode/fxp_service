@@ -2,10 +2,7 @@ package be.viaa.fxp;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Deque;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -138,27 +135,98 @@ public class FxpFileTransporter implements FileTransporter {
 			logger.debug("File: {}/{}", file.getDirectory(), file.getName());
 			
             /*
-             * Check to see if the source file exists
+             * Check to see if the source file exists and whether it' a file or a directory
              */
 			client.changeWorkingDirectory(file.getDirectory());
-			if (!Arrays.asList(client.listNames()).contains(file.getName())) {
-				throw new FileNotFoundException("could not find file " + file.getDirectory() + "/" + file.getName() + " on the FTP server");
+			boolean isDirectory = false;
+			if (containsFile(Arrays.asList(client.listDirectories()), file.getName())) {
+				// This is a directory
+				isDirectory = true;
+			} else {
+				// This might be a file
+				if (!Arrays.asList(client.listNames()).contains(file.getName())) {
+					// No. Nothing exists
+					throw new FileNotFoundException("could not find file " + file.getDirectory() + "/" + file.getName() + " on the FTP server");
+				} else {
+					isDirectory = true;
+				}
 			}
 			
 			/*
-			 * Delete the file from the remote FTP server and return the OK status when successful
+			 * Delete the file or directory from the remote FTP server and return the OK status when successful
 			 */
-			if (!client.deleteFile(file.getName())) {
-				throw new IOException("could not delete " + file.getDirectory() + "/" + file.getName());
-			}
-			else {
-				logger.info("SUCCESS: file {}/{} successfully deleted", file.getDirectory(), file.getName());
+			if (!isDirectory) {
+				if (!client.deleteFile(file.getName())) {
+					throw new IOException("could not delete " + file.getDirectory() + "/" + file.getName());
+				}
+				else {
+					logger.info("SUCCESS: file {}/{} successfully deleted", file.getDirectory(), file.getName());
+				}
+			} else {
+				// We must delete a directory. Recursively delete all files within it
+				removeDirectory(client, file.getDirectory(), file.getName());
 			}
 		} catch (IOException ex) {
 			// TODO: Connection to the FTP server has gone wrong
 			logger.catching(ex);
 		} finally {
 			client.disconnect();
+		}
+	}
+
+	public static boolean containsFile(List<FTPFile> files, String file) {
+		for (FTPFile ftpFile : files) {
+			if (ftpFile.getName().equals(file)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static void removeDirectory(FTPClient ftpClient, String parentDir,
+									   String currentDir) throws IOException {
+		String dirToList = parentDir;
+		if (!currentDir.equals("")) {
+			dirToList += "/" + currentDir;
+		}
+
+		FTPFile[] subFiles = ftpClient.listFiles(dirToList);
+
+		if (subFiles != null && subFiles.length > 0) {
+			for (FTPFile aFile : subFiles) {
+				String currentFileName = aFile.getName();
+				if (currentFileName.equals(".") || currentFileName.equals("..")) {
+					// skip parent directory and the directory itself
+					continue;
+				}
+				String filePath = parentDir + "/" + currentDir + "/"
+						+ currentFileName;
+				if (currentDir.equals("")) {
+					filePath = parentDir + "/" + currentFileName;
+				}
+
+				if (aFile.isDirectory()) {
+					// remove the sub directory
+					removeDirectory(ftpClient, dirToList, currentFileName);
+				} else {
+					// delete the file
+					boolean deleted = ftpClient.deleteFile(filePath);
+					if (deleted) {
+						logger.info("DELETED the file: " + filePath);
+					} else {
+						logger.info("CANNOT delete the file: "
+								+ filePath);
+					}
+				}
+			}
+
+			// finally, remove the directory itself
+			boolean removed = ftpClient.removeDirectory(dirToList);
+			if (removed) {
+				logger.info("REMOVED the directory: " + dirToList);
+			} else {
+				logger.info("CANNOT remove the directory: " + dirToList);
+			}
 		}
 	}
 
