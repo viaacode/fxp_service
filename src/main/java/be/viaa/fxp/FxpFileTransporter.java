@@ -372,6 +372,7 @@ public class FxpFileTransporter implements FileTransporter {
 	 */
 	private FTPClient connect(Host host) throws IOException {
 		FTPClient client = new FTPClient();
+		client.setControlEncoding("UTF8");
 		try {
 			logger.debug("connecting to {}:{}", host.getHost(), host.getPort());
 			
