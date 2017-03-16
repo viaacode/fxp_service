@@ -166,9 +166,6 @@ public class FxpFileTransporter implements FileTransporter {
 				// We must delete a directory. Recursively delete all files within it
 				removeDirectory(client, file.getDirectory(), file.getName());
 			}
-		} catch (IOException ex) {
-			// TODO: Connection to the FTP server has gone wrong
-			logger.catching(ex);
 		} finally {
 			client.disconnect();
 		}
@@ -216,6 +213,8 @@ public class FxpFileTransporter implements FileTransporter {
 					} else {
 						logger.info("CANNOT delete the file: "
 								+ filePath);
+						throw new IOException("CANNOT delete the file: "
+								+ filePath);
 					}
 				}
 			}
@@ -226,6 +225,7 @@ public class FxpFileTransporter implements FileTransporter {
 				logger.info("REMOVED the directory: " + dirToList);
 			} else {
 				logger.info("CANNOT remove the directory: " + dirToList);
+				throw new IOException("CANNOT remove the directory: " + dirToList);
 			}
 		}
 	}
@@ -372,6 +372,7 @@ public class FxpFileTransporter implements FileTransporter {
 	 */
 	private FTPClient connect(Host host) throws IOException {
 		FTPClient client = new FTPClient();
+		client.setControlEncoding("UTF8");
 		try {
 			logger.debug("connecting to {}:{}", host.getHost(), host.getPort());
 			
