@@ -14,7 +14,7 @@ import com.rabbitmq.client.Channel;
 
 /**
  * AMQP consumer for FXP messages
- * 
+ *
  * @author Hannes Lowette
  *
  */
@@ -36,10 +36,10 @@ public class FxpConsumer extends AmqpJsonConsumer<FxpRequest> {
 	public void accept(AmqpService service, FxpRequest message) throws Exception {
 		File sourceFile = new File(message.getSourcePath(), message.getSourceFile());
 		File targetFile = new File(message.getDestinationPath(), message.getDestinationFile());
-		
+
 		Host source = new Host(message.getSourceHost(), message.getSourceUser(), message.getSourcePassword());
 		Host target = new Host(message.getDestinationHost(), message.getDestinationUser(), message.getDestinationPassword());
-		
+
 		transporter.transfer(sourceFile, targetFile, source, target, message.move());
 	}
 
@@ -57,14 +57,17 @@ public class FxpConsumer extends AmqpJsonConsumer<FxpRequest> {
 		response.setCorrelationId(message.getCorrelationId());
 		response.setSourceFileRemoved(message.move());
 		response.setOutcome("OK");
-		
-		service.write("fxp_responses", GsonUtil.convert(response), channel);
+
+		String destqueue = (message.getDestQueue() == null || message.getDestQueue().isEmpty()) ? "fxp_responses" : message.getDestQueue();
+		service.createIfNotExists(destqueue);
+
+		service.write(destqueue, GsonUtil.convert(response), channel);
 	}
 
 	@Override
 	public void exception(AmqpService service, Exception exception, FxpRequest message, Channel channel) {
 		FxpResponse response = new FxpResponse();
-		
+
 		response.setSourceHost(message.getSourceHost());
 		response.setFilename(message.getSourceFile());
 		response.setDirectory(message.getSourcePath());
@@ -76,20 +79,26 @@ public class FxpConsumer extends AmqpJsonConsumer<FxpRequest> {
 		response.setSourceFileRemoved(false);
 		response.setOutcome("NOK");
 		response.setComment(exception.getMessage());
-		
-		exception.printStackTrace();
-		
+
+		String destqueue = (message.getDestQueue() == null || message.getDestQueue().isEmpty()) ? "fxp_responses" : message.getDestQueue();
 		try {
-			service.write("fxp_responses", GsonUtil.convert(response), channel);
+			service.createIfNotExists(destqueue);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		exception.printStackTrace();
+
+		try {
+			service.write(destqueue, GsonUtil.convert(response), channel);
 		} catch (Exception ex) {
 			// TODO: This exception needs to be monitored closely and logged pretty well, it means the queue
 			// TODO: is unreachable and this needs to be reported to inform that the RabbitMQ is down
 			ex.printStackTrace();
 		}
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	private final String getTimestamp() {
