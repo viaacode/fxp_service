@@ -1,9 +1,21 @@
 ### Status
 [![Build Status](https://travis-ci.org/viaacode/fxp_service.png)](https://travis-ci.org/viaacode/fxp_service)
 
-# fxp_service
+# FXP Service
 Microservice that transfers a file between two servers, triggered by RabbitMQ messages
 
+# Maven 
+You can compile or build the FXP service using either `compile assembly:single` or `package` (which includes the `compile assembly:single`).
+
+`mvn package` creates the same 'fat' jar as `mvn clean compile assembly:single`. Build the project using one of the two following:
+
+- `mvn clean compile assembly:single`
+- `mvn clean package`
+
+Once built, the artifact can be deployed to the nexus, assuming credentials for the VIAA repo are set up correctly:
+- `mvn deploy`
+
+Consult the [`mvn deploy`](https://maven.apache.org/plugins/maven-deploy-plugin/usage.html) documentation.
 
 # Example request
 
