@@ -5,11 +5,11 @@
       <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5level %logger{36} - %msg%n"/>
     </Console>
       
-    <RollingFile name="file_logger" fileName="${sys:mule.home}${sys:file.separator}logs${sys:file.separator}fxp_service.log" 
-                 filePattern="${sys:mule.home}${sys:file.separator}logs${sys:file.separator}fxp_service.log-%i">
+    <RollingFile name="file_logger" fileName="/var/log/fxp_service.log" 
+                 filePattern="/var/log/fxp_service.log.%i">
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5level %logger{36} - %msg%n" />
-            <SizeBasedTriggeringPolicy size="20 MB" />
-            <DefaultRolloverStrategy max="20"/>
+            <SizeBasedTriggeringPolicy size="10 MB" />
+            <DefaultRolloverStrategy max="10"/>
     </RollingFile>
     
     <Async name="async">
