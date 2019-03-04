@@ -4,9 +4,13 @@
     <Console name="Console" target="SYSTEM_OUT">
       <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5level %logger{36} - %msg%n"/>
     </Console>
-    <File name="file_logger" fileName="/var/log/fxp.log">
-      <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5level %logger{36} - %msg%n"/>
-    </File>
+      
+    <RollingFile name="file_logger" fileName="/var/log/fxp_service.log" 
+                 filePattern="/var/log/fxp_service.log.%i">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5level %logger{36} - %msg%n" />
+            <SizeBasedTriggeringPolicy size="10 MB" />
+            <DefaultRolloverStrategy max="10"/>
+    </RollingFile>
     
     <Async name="async">
     	<AppenderRef ref="file_logger" />
@@ -24,9 +28,6 @@
       <AppenderRef ref="async"/>
     </Root>
     <Root level="info">
-      <AppenderRef ref="async"/>
-    </Root>
-    <Root level="debug">
       <AppenderRef ref="async"/>
     </Root>
   </Loggers>
