@@ -8,6 +8,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
@@ -332,7 +333,10 @@ public class FxpFileTransporter implements FileTransporter {
      * @throws IOException
      */
     private boolean createDirectoryTree(File file, FTPClient client) throws IOException {
-        Deque<String> directoryStructure = new LinkedList<>(Arrays.asList(file.getDirectory().split("/")));
+        Deque<String> directoryStructure = new LinkedList<>(Arrays.asList(file.getDirectory().split("/"))
+            /*.stream()
+            .filter(dir -> !dir.isEmpty())
+            .collect(Collectors.toList())*/);
         Deque<String> directoryUnexistant = new LinkedList<>();
 
         logger.debug("creating directory tree for {}", file.getDirectory());
