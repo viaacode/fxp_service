@@ -334,9 +334,9 @@ public class FxpFileTransporter implements FileTransporter {
      */
     private boolean createDirectoryTree(File file, FTPClient client) throws IOException {
         Deque<String> directoryStructure = new LinkedList<>(Arrays.asList(file.getDirectory().split("/"))
-            /*.stream()
+            .stream()
             .filter(dir -> !dir.isEmpty())
-            .collect(Collectors.toList())*/);
+            .collect(Collectors.toList()));
         Deque<String> directoryUnexistant = new LinkedList<>();
 
         logger.debug("creating directory tree for {}", file.getDirectory());
