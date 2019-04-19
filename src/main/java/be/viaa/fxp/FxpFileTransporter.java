@@ -346,9 +346,12 @@ public class FxpFileTransporter implements FileTransporter {
 		 * need to be created.
 		 */
         while (!directoryStructure.isEmpty()) {
-            if (!client.changeWorkingDirectory(Strings.join("/", directoryStructure))) {
+            // If path starts with a /, add it back when changing directory (since it was removed with the filter above)
+            if (!client.changeWorkingDirectory((file.getDirectory().startsWith("/") ? "/" : "") + Strings.join("/", directoryStructure))) {
                 directoryUnexistant.addFirst(directoryStructure.removeLast());
-            } else break;
+            } else {
+                break;
+            }
         }
 
         logger.debug("folders to be created: {}", Strings.join("/", directoryUnexistant));
@@ -368,7 +371,6 @@ public class FxpFileTransporter implements FileTransporter {
 
     /**
      *
-     * @param client
      * @param host
      * @return
      * @throws IOException
@@ -412,7 +414,7 @@ public class FxpFileTransporter implements FileTransporter {
      * Gets a remote FTP file by its name
      *
      * @param file
-     * @param client
+     * @param host
      * @return
      */
     private FTPFile get(File file, Host host) throws IOException {
