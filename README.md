@@ -42,6 +42,10 @@ Consult the [`mvn
 deploy`](https://maven.apache.org/plugins/maven-deploy-plugin/usage.html)
 documentation.
 
+#### Deploying to different datacenters
+Maven doesn't seem to allow the deployment to 2 repositories at the same time. There can only be one `<repository>` within the `<distributionManagement>` tags. If deployment needs to be done to a different DC, the POM should be manually modified to change the target.
+If different credentials are required, they must exist within your settings.xml file.
+
 #### Prerequisites
 
 - Maven
