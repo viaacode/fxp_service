@@ -9,14 +9,14 @@
   <distributionManagement>
     <repository>
       <uniqueVersion>true</uniqueVersion>
-      <id>viaa-releases</id>
+      <id>viaa-releases-do</id>
       <name>VIAA Releases</name>
       <url>http://do-qas-mvn-01.do.viaa.be:8081/repository/maven-releases/</url>
       <layout>default</layout>
     </repository>
     <snapshotRepository>
       <uniqueVersion>false</uniqueVersion>
-      <id>viaa-snapshots</id>
+      <id>viaa-snapshots-do</id>
       <name>VIAA Snapshots</name>
       <url>http://do-qas-mvn-01.do.viaa.be:8081/repository/maven-snapshots/</url>
       <layout>default</layout>
