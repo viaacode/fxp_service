@@ -14,6 +14,13 @@ pipeline {
         stage ('Build') {
             steps {
               configFileProvider([configFile(fileId: '452256a3-4cec-48ed-9194-8437ff991435', variable: 'MAVEN_SETTINGS_XML')]) {
+                sh 'mvn -s $MAVEN_SETTINGS_XML package'
+              }
+            }
+        }
+        stage ('Deploy') {
+            steps {
+              configFileProvider([configFile(fileId: '452256a3-4cec-48ed-9194-8437ff991435', variable: 'MAVEN_SETTINGS_XML')]) {
                 sh 'mvn -s $MAVEN_SETTINGS_XML deploy'
               }
             }
