@@ -12,10 +12,15 @@ pipeline {
     }
     stages {
         stage ('Build') {
-            steps {
-              configFileProvider([configFile(fileId: '452256a3-4cec-48ed-9194-8437ff991435', variable: 'MAVEN_SETTINGS_XML')]) {
-                sh 'mvn deploy'
-              }
+           withMaven(
+            // Maven installation declared in the Jenkins "Global Tool Configuration"
+            maven: 'M3',
+            // Maven settings.xml file defined with the Jenkins Config File Provider Plugin
+            // Maven settings and global settings can also be defined in Jenkins Global Tools Configuration
+            mavenSettingsConfig: '452256a3-4cec-48ed-9194-8437ff991435',
+            mavenLocalRepo: '.repository') {
+              // Run the maven build
+              sh "mvn deploy"
             }
         }
     }
