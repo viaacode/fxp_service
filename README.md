@@ -23,7 +23,7 @@ data transfer which uses FTP to transfer data from one remote server to another
 
 ## Deployment/Installation
 
-See the Jenkins documentation here: [Setting up a Jenkins pipeline](ihttps://github.com/viaacode/viaa-meta-dev/blob/master/docs/setting-up-a-jenkins-pipeline.md)
+See the Jenkins documentation here: [Setting up a Jenkins pipeline](https://github.com/viaacode/viaa-meta-dev/blob/master/docs/setting-up-a-jenkins-pipeline.md)
 
 ### Maven 
 
