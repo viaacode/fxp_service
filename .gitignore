@@ -8,6 +8,7 @@
 # Custom additions, either project- or VIAA-specific #
 # -------------------------------------------------- #
 
+*.swp
 
 # -------------------------------------------------- #
 #  Maven.gitignore

@@ -23,6 +23,8 @@ data transfer which uses FTP to transfer data from one remote server to another
 
 ## Deployment/Installation
 
+See the Jenkins documentation here: [Setting up a Jenkins pipeline](ihttps://github.com/viaacode/viaa-meta-dev/blob/master/docs/setting-up-a-jenkins-pipeline.md)
+
 ### Maven 
 
 You can compile or build the FXP service using either `compile assembly:single`
@@ -43,6 +45,7 @@ deploy`](https://maven.apache.org/plugins/maven-deploy-plugin/usage.html)
 documentation.
 
 #### Deploying to different datacenters
+
 Maven doesn't seem to allow the deployment to 2 repositories at the same time. There can only be one `<repository>` within the `<distributionManagement>` tags. If deployment needs to be done to a different DC, the POM should be manually modified to change the target.
 If different credentials are required, they must exist within your settings.xml file.
 
