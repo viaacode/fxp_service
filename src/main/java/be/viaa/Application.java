@@ -43,6 +43,8 @@ public class Application {
 		String host = properties.getProperty("mq.rabbit.host");
 		String username = properties.getProperty("mq.rabbit.username");
 		String password = properties.getProperty("mq.rabbit.password");
+		String request_queue = properties.getProperty("mq.rabbit.request_queue");
+		String response_queue = properties.getProperty("mq.rabbit.response_queue");
 
 		/*
 		 * If there is no host specified, exit the program
@@ -55,10 +57,10 @@ public class Application {
 			AmqpService service = new RabbitMQService(host, username, password);
 			AmqpBatchService poller = new AmqpBatchService(service);
 			
-			service.createIfNotExists("fxp_requests");
-			service.createIfNotExists("fxp_responses");
+			service.createIfNotExists(request_queue);
+			service.createIfNotExists(response_queue);
 
-			poller.addListener("fxp_requests", new FxpConsumer());
+			poller.addListener(request_queue, new FxpConsumer());
 			poller.start();
 		} catch (Exception exception) {
 			logger.fatal("Could not connect to the MQ server: " + exception.getMessage());
