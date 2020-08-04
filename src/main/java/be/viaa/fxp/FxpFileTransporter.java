@@ -77,7 +77,7 @@ public class FxpFileTransporter implements FileTransporter {
                 logger.info("RETRY {}", attempt);
             }
             try {
-                Thread.sleep(10000L);
+                Thread.sleep(FILESIZE_COMPARE_INTERVAL);
             } catch (Exception ex) {
                 ex.printStackTrace(); // This should never happen
             }
@@ -313,6 +313,9 @@ public class FxpFileTransporter implements FileTransporter {
                 logger.info("SUCCESS: file {}/{} transferred", sourceFile.getDirectory(), sourceFile.getName());
                 return FxpStatus.OK;
             }
+        } catch (FileNotFoundException ex) {
+            logger.warn("ERROR: File not found {}/{}", sourceFile.getDirectory(), sourceFile.getName());
+            return FxpStatus.ERROR;
         } catch (Exception ex) {
             logger.catching(ex);
             return FxpStatus.ERROR;
