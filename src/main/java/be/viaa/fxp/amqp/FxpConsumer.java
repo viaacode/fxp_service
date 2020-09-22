@@ -59,7 +59,6 @@ public class FxpConsumer extends AmqpJsonConsumer<FxpRequest> {
 		response.setOutcome("OK");
 
 		String destqueue = (message.getDestQueue() == null || message.getDestQueue().isEmpty()) ? "fxp_responses" : message.getDestQueue();
-		service.createIfNotExists(destqueue);
 
 		service.write(destqueue, GsonUtil.convert(response), channel);
 	}
@@ -81,11 +80,6 @@ public class FxpConsumer extends AmqpJsonConsumer<FxpRequest> {
 		response.setComment(exception.getMessage());
 
 		String destqueue = (message.getDestQueue() == null || message.getDestQueue().isEmpty()) ? "fxp_responses" : message.getDestQueue();
-		try {
-			service.createIfNotExists(destqueue);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 		exception.printStackTrace();
 
 		try {
