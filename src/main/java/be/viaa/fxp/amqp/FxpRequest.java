@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 /**
  * An FXP request
- * 
+ *
  * @author Hannes Lowette
  *
  */
@@ -15,13 +15,13 @@ public class FxpRequest {
 	 */
 	@SerializedName("source_path")
 	private String sourcePath;
-	
+
 	/**
 	 * The filename on the source remote
 	 */
 	@SerializedName("source_file")
 	private String sourceFile;
-	
+
 	/**
 	 * The source host address
 	 */
@@ -33,7 +33,7 @@ public class FxpRequest {
 	 */
 	@SerializedName("source_user")
 	private String sourceUser;
-	
+
 	/**
 	 * The password to authenticate on the source host
 	 */
@@ -45,37 +45,43 @@ public class FxpRequest {
 	 */
 	@SerializedName("destination_path")
 	private String destinationPath;
-	
+
 	/**
 	 * The filename on the destination host
 	 */
 	@SerializedName("destination_file")
 	private String destinationFile;
-	
+
 	/**
 	 * The destination host address
 	 */
 	@SerializedName("destination_host")
 	private String destinationHost;
-	
+
 	/**
 	 * The username of the destination host
 	 */
 	@SerializedName("destination_user")
 	private String destinationUser;
-	
+
 	/**
 	 * The password of the destination FTP host
 	 */
 	@SerializedName("destination_password")
 	private String destinationPassword;
-	
+
 	/**
 	 * The PID
 	 */
 	@SerializedName("correlation_id")
 	private String correlationId;
-	
+
+	/**
+	 * The destination queue
+	 */
+	@SerializedName("dest_queue")
+	private String destQueue;
+
 	/**
 	 * Indicates the source file needs to be removed or not
 	 */
@@ -229,6 +235,21 @@ public class FxpRequest {
 	 */
 	public void setDestinationPassword(String destinationPassword) {
 		this.destinationPassword = destinationPassword;
+	}
+
+	/**
+	 * @return the destQueue
+	 */
+	public String getDestQueue() {
+		return destQueue;
+	}
+
+	/**
+	 * @param destQueue
+	 *            the destQueue to set
+	 */
+	public void setDestQueue(String destQueue) {
+		this.destQueue = destQueue;
 	}
 
 	/**

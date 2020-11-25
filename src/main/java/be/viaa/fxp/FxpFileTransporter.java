@@ -8,6 +8,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
@@ -76,7 +77,7 @@ public class FxpFileTransporter implements FileTransporter {
                 logger.info("RETRY {}", attempt);
             }
             try {
-                Thread.sleep(10000L);
+                Thread.sleep(FILESIZE_COMPARE_INTERVAL);
             } catch (Exception ex) {
                 ex.printStackTrace(); // This should never happen
             }
@@ -312,6 +313,9 @@ public class FxpFileTransporter implements FileTransporter {
                 logger.info("SUCCESS: file {}/{} transferred", sourceFile.getDirectory(), sourceFile.getName());
                 return FxpStatus.OK;
             }
+        } catch (FileNotFoundException ex) {
+            logger.warn("ERROR: File not found {}/{}", sourceFile.getDirectory(), sourceFile.getName());
+            return FxpStatus.ERROR;
         } catch (Exception ex) {
             logger.catching(ex);
             return FxpStatus.ERROR;
@@ -332,7 +336,10 @@ public class FxpFileTransporter implements FileTransporter {
      * @throws IOException
      */
     private boolean createDirectoryTree(File file, FTPClient client) throws IOException {
-        Deque<String> directoryStructure = new LinkedList<>(Arrays.asList(file.getDirectory().split("/")));
+        Deque<String> directoryStructure = new LinkedList<>(Arrays.asList(file.getDirectory().split("/"))
+            .stream()
+            .filter(dir -> !dir.isEmpty())
+            .collect(Collectors.toList()));
         Deque<String> directoryUnexistant = new LinkedList<>();
 
         logger.debug("creating directory tree for {}", file.getDirectory());
@@ -342,9 +349,12 @@ public class FxpFileTransporter implements FileTransporter {
 		 * need to be created.
 		 */
         while (!directoryStructure.isEmpty()) {
-            if (!client.changeWorkingDirectory(Strings.join("/", directoryStructure))) {
+            // If path starts with a /, add it back when changing directory (since it was removed with the filter above)
+            if (!client.changeWorkingDirectory((file.getDirectory().startsWith("/") ? "/" : "") + Strings.join("/", directoryStructure))) {
                 directoryUnexistant.addFirst(directoryStructure.removeLast());
-            } else break;
+            } else {
+                break;
+            }
         }
 
         logger.debug("folders to be created: {}", Strings.join("/", directoryUnexistant));
@@ -364,7 +374,6 @@ public class FxpFileTransporter implements FileTransporter {
 
     /**
      *
-     * @param client
      * @param host
      * @return
      * @throws IOException
@@ -408,7 +417,7 @@ public class FxpFileTransporter implements FileTransporter {
      * Gets a remote FTP file by its name
      *
      * @param file
-     * @param client
+     * @param host
      * @return
      */
     private FTPFile get(File file, Host host) throws IOException {
